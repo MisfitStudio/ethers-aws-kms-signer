@@ -3,15 +3,25 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.recoverPublicKey = recoverPublicKey;
 exports.validateVersion = validateVersion;
 exports.recoverTypedSignature = recoverTypedSignature;
 
 var _ethSigUtil = require("@metamask/eth-sig-util");
 
-var _utils = require("@metamask/eth-sig-util/dist/utils");
-
 var _ethereumjsUtil = require("ethereumjs-util");
 
+/**
+ * Recover the public key from the given signature and message hash.
+ *
+ * @param messageHash - The hash of the signed message.
+ * @param signature - The signature.
+ * @returns The public key of the signer.
+ */
+function recoverPublicKey(messageHash, signature) {
+  const sigParams = (0, _ethereumjsUtil.fromRpcSig)(signature);
+  return (0, _ethereumjsUtil.ecrecover)(messageHash, sigParams.v, sigParams.r, sigParams.s);
+}
 /**
  * Validate that the given value is a valid version string.
  *
@@ -19,6 +29,8 @@ var _ethereumjsUtil = require("ethereumjs-util");
  * @param allowedVersions - A list of allowed versions. If omitted, all versions are assumed to be
  * allowed.
  */
+
+
 function validateVersion(version, allowedVersions) {
   if (!Object.keys(_ethSigUtil.SignTypedDataVersion).includes(version)) {
     throw new Error(`Invalid version: '${version}'`);
@@ -60,7 +72,7 @@ function recoverTypedSignature({
     messageHash = _ethSigUtil.TypedDataUtils.eip712Hash(data, version);
   }
 
-  const publicKey = (0, _utils.recoverPublicKey)(messageHash, signature);
+  const publicKey = recoverPublicKey(messageHash, signature);
   const sender = (0, _ethereumjsUtil.publicToAddress)(publicKey);
   return (0, _ethereumjsUtil.bufferToHex)(sender);
 }

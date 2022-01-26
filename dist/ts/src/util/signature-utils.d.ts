@@ -1,4 +1,13 @@
+/// <reference types="node" />
 import { MessageTypes, SignTypedDataVersion, TypedDataV1, TypedMessage } from "@metamask/eth-sig-util";
+/**
+ * Recover the public key from the given signature and message hash.
+ *
+ * @param messageHash - The hash of the signed message.
+ * @param signature - The signature.
+ * @returns The public key of the signer.
+ */
+export declare function recoverPublicKey(messageHash: any, signature: any): Buffer;
 /**
  * Validate that the given value is a valid version string.
  *
